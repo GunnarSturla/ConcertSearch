@@ -25,7 +25,7 @@ pg.connect(process.env.DATABASE_URL, function(err, client, done) {
   res.render('index', {
   	title: 'Concert Search',
   	query: req.query.q,
-  	db: dbresp
+  	db: dbresp.name
   });
   /*res.send({
   	users: ['Will', "Laura"]
