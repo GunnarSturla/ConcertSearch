@@ -3,7 +3,7 @@ var update = require("../bin/update.js");
 
 
 describe("Update", function() {
-	describe("#getApisJson(callback)", function(done) {
+	describe("#getApisData(callback)", function(done) {
 		it("should return a JSON object", function() {
 
 			function getApisCallback(result) {
@@ -11,21 +11,21 @@ describe("Update", function() {
 				done();
 			}
 
-			update.getApisJson(getApisCallback);
+			update.getApisData(getApisCallback);
 		});
 	});
 
-	/*describe("#checkJson(object)", function() {
+	/*describe("#checkIfExists(object)", function() {
 		it("should check if all data in object is in database", function() {
 
 		});
 
 	});*/
 
-	describe("#checkOne(concert, callback)", function() {
+	describe("#checkIfOneExists(concert, number, callback)", function() {
 		it("should return false when concert is not in database", function(done) {
 
-			function checkOneCallback(err, result) {
+			function checkOneCallback(err,number, result) {
 				if(!err) {
 					expect(result).to.equal(false);
 					done();
@@ -41,11 +41,11 @@ describe("Update", function() {
 				"imageSource":"http://midi.is/images/medium/1.8552.jpg"
 			};
 
-			update.checkOne(testConcert, checkOneCallback);
+			update.checkIfOneExists(testConcert, 0, checkOneCallback);
 		});
 		it("should return true when a concert is already in database", function(done) {
 
-			function checkOneCallback(err, result) {
+			function checkOneCallback(err, number, result) {
 				if(!err) {
 					expect(result).to.equal(true);
 					done();
@@ -61,11 +61,11 @@ describe("Update", function() {
 				"imageSource":""
 			};
 
-			update.checkOne(testConcert, checkOneCallback);
+			update.checkIfOneExists(testConcert, 0, checkOneCallback);
 		});
 	});
 
-	describe("#checkJson(concerts, callback)", function(done) {
+	describe("#checkIfExists(concerts, callback)", function(done) {
 		it("should return an empty array when all concerts are in database", function () {
 			function checkJsonCallback(err, result) {
 				expect(result).to.equal([]);
@@ -83,7 +83,7 @@ describe("Update", function() {
 
 			var testArray = [testConcert];
 
-			update.checkJson(testArray, checkJsonCallback);
+			update.checkIfExists(testArray, checkJsonCallback);
 
 		});
 		it("should return an array of new concerts when concerts are not in database", function (done) {
@@ -119,7 +119,7 @@ describe("Update", function() {
 
 			var testArray = [testConcert0, testConcert1];
 
-			update.checkJson(testArray, checkJsonCallback);
+			update.checkIfExists(testArray, checkJsonCallback);
 		});
 	});
 });

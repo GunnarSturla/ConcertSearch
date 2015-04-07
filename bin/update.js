@@ -1,5 +1,5 @@
 var http = require('http');
-var orm = require("orm");
+var db = require("./db.js");
 
 exports = module.exports = {};
 
@@ -7,7 +7,7 @@ exports.update = function() {
 
 };
 
-exports.getApisJson = function(retCallback) {
+getApisData = function(retCallback) {
 	var options = {
 		host: 'apis.is',
 		path: '/concerts'
@@ -15,14 +15,15 @@ exports.getApisJson = function(retCallback) {
 
 	var callback = function(response) {
 		var str = '';
-
+		console.log('Getting data from Apis');
 		//another chunk of data has been recieved, so append it to `str`
 		response.on('data', function (chunk) {
 			str += chunk;
 		});
 
-		//the whole response has been recieved, so we just print it out here
+		//the whole response has been received, so we just print it out here
 		response.on('end', function () {
+			console.log(str);
 			retCallback(JSON.parse(str));
 		});
 	};
@@ -30,19 +31,20 @@ exports.getApisJson = function(retCallback) {
 	http.request(options, callback).end();
 };
 
-exports.checkJson = function(concerts, callback)
+checkIfExists = function(concerts, callback)
 {
+	console.log('Checking data');
 	var noRounds = 0;
 	var noChecks = concerts.lenth;
 	var returnArray = [];
 
-	function checker(err, result) {
+	function checker(err, number, result) {
 		if(err) {
-			callback(err, false);
-		} else if (result) {
+			callback(err, []);
+		} else if (result == true) {
 			// concert is in database, move along
 		} else {
-			returnArray.push(concerts[noRounds]);
+			returnArray.push(concerts[number]);
 			//console.log(concerts[noRounds]);
 			//console.log(returnArray[0].eventDateName);
 		}
@@ -53,34 +55,26 @@ exports.checkJson = function(concerts, callback)
 	}
 
 	for(var i = 0; i < concerts.length; i++) {
-		this.checkOne(concerts[i], checker);
-	}
-}
-
-
-
-exports.checkOne = function(concert, callback) {
-	/*var dbURL = 'postgres://asxpfklbktfkgn:i4KR-MrAgZzbgCRc4uj7uN8ZqI@ec2-50-17-181-147.compute-1.amazonaws.com:5432/dcgh0u24tvps9v?ssl=true';
-	var db = orm.connect(dbURL);
-	db.on('connect', function(err) {
-		if (err) return console.error('Connection error: ' + err);
-
-		var Concert = db.define("concert", {
-			concertId		: integer,
-			eventDateName  	: text,
-			name		   	: text,
-			dateShow        : text,
-			userGroupname   : text,
-			eventHallName	: text,
-			price			: integer
-		});
-
-		callback(Concert.exists({eventDateName : concert.eventDateName, dateOfShow: concert.dateOfShow}));
-
-	});*/
-	if(concert.eventDateName == "Siggi litli sörensen") {
-		callback('',true);
-	} else {
-		callback('',false);
+		checkIfOneExists(concerts[i], i, checker);
 	}
 };
+
+
+
+checkIfOneExists = function(concert, number, callback) {
+		//callback('',number, Concert.exists({eventDateName : concert.eventDateName, dateOfShow: concert.dateOfShow}));
+		callback('',number, false);
+};
+
+db.onReady(getApisData(function(apisData) {
+		console.log("db ready, let's do this")
+		checkIfExists(apisData, function (err, unaddedConcerts){
+			if(err) {
+				console.log(err);
+				return false;
+			}
+			else if (unaddedConcerts === [])
+				return true;
+		})
+	})
+);

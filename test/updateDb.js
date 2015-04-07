@@ -5,6 +5,6 @@ exports.update = function() {
 
 }
 
-exports.getApisJson = function() {
+exports.getApisData = function() {
 	var results = JSON.parse()
 }
