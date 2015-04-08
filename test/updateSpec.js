@@ -15,7 +15,7 @@ describe("Update", function() {
 		});
 	});
 
-	/*describe("#checkIfExists(object)", function() {
+	/*describe("#addConcertsIfMissing(object)", function() {
 		it("should check if all data in object is in database", function() {
 
 		});
@@ -65,7 +65,7 @@ describe("Update", function() {
 		});
 	});
 
-	describe("#checkIfExists(concerts, callback)", function(done) {
+	describe("#addConcertsIfMissing(concerts, callback)", function(done) {
 		it("should return an empty array when all concerts are in database", function () {
 			function checkJsonCallback(err, result) {
 				expect(result).to.equal([]);
@@ -83,7 +83,7 @@ describe("Update", function() {
 
 			var testArray = [testConcert];
 
-			update.checkIfExists(testArray, checkJsonCallback);
+			update.addConcertsIfMissing(testArray, checkJsonCallback);
 
 		});
 		it("should return an array of new concerts when concerts are not in database", function (done) {
@@ -119,7 +119,7 @@ describe("Update", function() {
 
 			var testArray = [testConcert0, testConcert1];
 
-			update.checkIfExists(testArray, checkJsonCallback);
+			update.addConcertsIfMissing(testArray, checkJsonCallback);
 		});
 	});
 });

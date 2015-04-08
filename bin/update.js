@@ -1,6 +1,8 @@
 var http = require('http');
 var db = require("./db.js");
 
+var concertsDB = null;
+var seatsDB = null;
 exports = module.exports = {};
 
 exports.update = function() {
@@ -31,12 +33,14 @@ getApisData = function(retCallback) {
 	http.request(options, callback).end();
 };
 
-checkIfExists = function(concerts, callback)
+addConcertsIfMissing = function(concertsData, callback)
 {
 	console.log('Checking data');
 	var noRounds = 0;
-	var noChecks = concerts.lenth;
+	var noChecks = concertsData.results.length;
+	var concerts = concertsData.results;
 	var returnArray = [];
+	console.log(noChecks);
 
 	function checker(err, number, result) {
 		if(err) {
@@ -53,28 +57,36 @@ checkIfExists = function(concerts, callback)
 			callback('', returnArray);
 		}
 	}
+	var number = 0;
+	for(var i = 0; i < noChecks; i++) {
+		console.log('checking concert '+i);
+		console.log(concerts[i]);
+		concertsDB.exists({eventDateName : concerts[i].eventDateName, dateOfShow: concerts[i].dateOfShow}, function(err, concertExists) {
 
-	for(var i = 0; i < concerts.length; i++) {
-		checkIfOneExists(concerts[i], i, checker);
+			if(!concertExists) {
+				console.log('adding ' +concerts[number].eventDateName);
+			}
+			number++;
+		});
 	}
 };
 
 
+db.onReady(function() {
+		console.log('calling back');
+		concertsDB = db.Concerts;
+		seatsDB = db.Seats;
 
-checkIfOneExists = function(concert, number, callback) {
-		//callback('',number, Concert.exists({eventDateName : concert.eventDateName, dateOfShow: concert.dateOfShow}));
-		callback('',number, false);
-};
-
-db.onReady(getApisData(function(apisData) {
-		console.log("db ready, let's do this")
-		checkIfExists(apisData, function (err, unaddedConcerts){
-			if(err) {
-				console.log(err);
-				return false;
-			}
-			else if (unaddedConcerts === [])
-				return true;
-		})
-	})
+		getApisData(function(apisData) {
+				console.log("db ready, let's do dis");
+				addConcertsIfMissing(apisData, function (err, unaddedConcerts){
+					if(err) {
+						console.log(err);
+						return false;
+					}
+					else if (unaddedConcerts === [])
+						return true;
+				});
+			})
+		}
 );

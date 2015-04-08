@@ -17,19 +17,19 @@ if (!process.env.NODE_ENV) {
 } else {
 	db = orm.connect(process.env.DATABASE_URL);
 }
-db.on('connect', function(err, db){
-});
+/*db.on('connect', function(err, db){
+});*/
 
 exports.onReady = function (callback) {
-	var callback = callback;
+	//var callback = callback;
 	console.log('onReady');
 
 	db.on('connect', function(err, db) {
+		if (err) return printError(err);
 		console.log('Raungefni í gagnagrunni.');
 		console.log('Ný tenging hafin, ' + new Date());
-		setUp(err, db);
+		setUp(err, db, callback);
 	});
-	callback();
 };
 
 function setUp(err, db, callback) {
@@ -71,13 +71,13 @@ function setUp(err, db, callback) {
 	 *****************/
 	Concerts.sync(function (err) {
 		if (err) return printError(err);
-
-		exports.Concerts = Concerts;
 	});
+	exports.Concerts = Concerts;
+
 	Seats.sync(function (err) {
 		if (err) return printError(err);
-		exports.Seats = Seats;
 	});
+	exports.Seats = Seats;
 
 	/********************
 	 *                  *
@@ -97,6 +97,6 @@ function setUp(err, db, callback) {
 		});
 	};*/
 
-	//callback();
+	callback();
 
 }
