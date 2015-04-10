@@ -46,7 +46,7 @@ function setUp(err, db, callback) {
 		id: {type: 'number'},
 		eventDateName: {type: 'text'},
 		name: {type: 'text'},
-		dateShow: {type: 'text'},
+		dateOfShow: {type: 'text'},
 		userGroupName: {type: 'text'},
 		eventHallName: {type: 'text'},
 		imageSource: {type: 'text'},

@@ -5,6 +5,24 @@ var concertsDB = null;
 var seatsDB = null;
 exports = module.exports = {};
 
+/********************************************************************************
+ * 																				*
+ *		  _        _									  _        _			*
+ *		_| |      | |_									_| |      | |_			*
+ *		|_ \      / _|									|_ \      / _|			*
+ *		  \ \____/ /									  \ \____/ /			*
+ * 		   \/_  _\/	 	 ****************************	   \/_  _\/				*
+ *		    \*  */  	/*		WELCOME TO....		*	    \*  */  		   /*
+ *		     |/\|		 *		CALLBACK HELL!!!	*	     |/\|				*
+ *	 	     /__\		 *							*	     /__\				*
+ *		    /\__/\		 ****************************	    /\__/\				*
+ *		  _/ /  \ \_									  _/ /  \ \_			*
+ *		 |_ /    \ _|									 |_ /    \ _|			*
+ *		  |_|    |_|									  |_|    |_|			*
+ *	  																			*
+ ********************************************************************************/
+
+
 exports.update = function() {
 
 };
@@ -25,7 +43,7 @@ getApisData = function(retCallback) {
 
 		//the whole response has been received, so we just print it out here
 		response.on('end', function () {
-			console.log(str);
+			//console.log(str);
 			retCallback(JSON.parse(str));
 		});
 	};
@@ -42,35 +60,52 @@ addConcertsIfMissing = function(concertsData, callback)
 	var returnArray = [];
 	console.log(noChecks);
 
-	function checker(err, number, result) {
-		if(err) {
-			callback(err, []);
-		} else if (result == true) {
-			// concert is in database, move along
-		} else {
-			returnArray.push(concerts[number]);
-			//console.log(concerts[noRounds]);
-			//console.log(returnArray[0].eventDateName);
-		}
-		noRounds++;
-		if(noRounds == noChecks) {
-			callback('', returnArray);
-		}
-	}
 	var number = 0;
 	for(var i = 0; i < noChecks; i++) {
 		console.log('checking concert '+i);
 		console.log(concerts[i]);
-		concertsDB.exists({eventDateName : concerts[i].eventDateName, dateOfShow: concerts[i].dateOfShow}, function(err, concertExists) {
+		createIt = function(i) {
+			if(!i) i = 0;
 
-			if(!concertExists) {
-				console.log('adding ' +concerts[number].eventDateName);
+			return function(err, concertExists) {
+				if(!concertExists) {
+					console.log('adding ' +concerts[i].eventDateName);
+					var price = Math.floor(Math.random()*20+1)*1000
+					// Verð á bilinu 1000 til 20000
+					concertsDB.create([{
+						eventDateName: concerts[i].eventDateName,
+						name: concerts[i].name,
+						dateOfShow: concerts[i].dateShow,
+						userGroupName: concerts[i].userGroupName,
+						eventHallName: concerts[i].eventHallName,
+						imageSource: concerts[i].imageSource,
+						price: price
+					}], function(err, items) {
+						if(err) return printError(err);
+						console.log('wrote to db: ' + items[0].eventDateName+' price: '+items[0].price);
+					})
+				}
+				return true;
 			}
-			number++;
-		});
+		};
+		concertsDB.exists({eventDateName : concerts[i].eventDateName, dateOfShow: concerts[i].dateOfShow}, createIt(i));
 	}
+	return true;
 };
-
+/*
+                              .___.
+          /)               ,-^     ^-.
+         //               /           \
+.-------| |--------------/  __     __  \-------------------.__
+|WMWMWMW| |>>>>>>>>>>>>> | />>\   />>\ |>>>>>>>>>>>>>>>>>>>>>>:>
+`-------| |--------------| \__/   \__/ |-------------------'^^
+         \\               \    /|\    /
+          \)               \   \_/   /
+                            |       |
+                            |+H+H+H+|
+                            \       /
+                             ^-----^
+ */
 
 db.onReady(function() {
 		console.log('calling back');
@@ -87,6 +122,8 @@ db.onReady(function() {
 					else if (unaddedConcerts === [])
 						return true;
 				});
-			})
+			return true;
+			});
+		return true;
 		}
 );
