@@ -17,6 +17,7 @@ if (!process.env.NODE_ENV) {
 } else {
 	db = orm.connect(process.env.DATABASE_URL);
 }
+exports.db = db;
 /*db.on('connect', function(err, db){
 });*/
 
@@ -53,10 +54,10 @@ function setUp(err, db, callback) {
 		price: {type: 'number'}
 	});
 	var Seats = db.define('seats', {
-		concertId:	{type: 'text'},
-		seatNo:		{type: 'number'},
-		rowNo:		{type: 'number'},
-		referenceNo:{type: 'text'}
+		concertId:	 {type: 'text'},
+		seatNo:		 {type: 'number'},
+		rowNo:		 {type: 'number'},
+		available: {type: 'text'}
 	});
 	/*****************
 	 *               *

@@ -3,6 +3,8 @@ var db = require("./db.js");
 
 var concertsDB = null;
 var seatsDB = null;
+
+var dbReady = false;
 exports = module.exports = {};
 
 /********************************************************************************
@@ -23,8 +25,18 @@ exports = module.exports = {};
  ********************************************************************************/
 
 
-exports.update = function() {
+exports.update = function(callback) {
 
+	if(dbReady) {
+		getApisData(function (apisData) {
+			console.log("db ready, let's do dis");
+			addConcertsIfMissing(apisData, callback);
+		});
+
+	} else {
+		console.log('Connection to database not established');
+		callback(false);
+	}
 };
 
 getApisData = function(retCallback) {
@@ -63,11 +75,12 @@ addConcertsIfMissing = function(concertsData, callback)
 	var number = 0;
 	for(var i = 0; i < noChecks; i++) {
 		console.log('checking concert '+i);
-		console.log(concerts[i]);
 		createIt = function(i) {
 			if(!i) i = 0;
 
 			return function(err, concertExists) {
+				console.log('concertExists: ' + concertExists);
+
 				if(!concertExists) {
 					console.log('adding ' +concerts[i].eventDateName);
 					var price = Math.floor(Math.random()*20+1)*1000
@@ -75,7 +88,7 @@ addConcertsIfMissing = function(concertsData, callback)
 					concertsDB.create([{
 						eventDateName: concerts[i].eventDateName,
 						name: concerts[i].name,
-						dateOfShow: concerts[i].dateShow,
+						dateOfShow: concerts[i].dateOfShow,
 						userGroupName: concerts[i].userGroupName,
 						eventHallName: concerts[i].eventHallName,
 						imageSource: concerts[i].imageSource,
@@ -83,14 +96,38 @@ addConcertsIfMissing = function(concertsData, callback)
 					}], function(err, items) {
 						if(err) return printError(err);
 						console.log('wrote to db: ' + items[0].eventDateName+' price: '+items[0].price);
+
+
+						var noRows = 10;
+						var noSeats = 10;
+						var seatArr = [];
+						for(var j = 0; j < noRows; j++) {
+							for(var k = 0; k < noSeats; k++) {
+								//console.log('j:'+j+' k:'+k);
+								var seat = {
+									concertId: items[0].id,
+									seatNo: k,
+									rowNo: j,
+									available: 1
+								};
+								seatArr.push(seat);
+							}
+						}
+						//console.log(seatArr);
+						seatsDB.create(seatArr, function(err, items) {
+							if(err) return printError(err);
+							console.log('Setti '+items.length+' seats í db tengt');
+							//console.log(items);
+						});
 					})
 				}
-				return true;
+				//return true;
 			}
 		};
 		concertsDB.exists({eventDateName : concerts[i].eventDateName, dateOfShow: concerts[i].dateOfShow}, createIt(i));
+		callback(true);
 	}
-	return true;
+	// Hér vantar callback();
 };
 /*
                               .___.
@@ -109,21 +146,10 @@ addConcertsIfMissing = function(concertsData, callback)
 
 db.onReady(function() {
 		console.log('calling back');
+		dbReady = true;
+
 		concertsDB = db.Concerts;
 		seatsDB = db.Seats;
-
-		getApisData(function(apisData) {
-				console.log("db ready, let's do dis");
-				addConcertsIfMissing(apisData, function (err, unaddedConcerts){
-					if(err) {
-						console.log(err);
-						return false;
-					}
-					else if (unaddedConcerts === [])
-						return true;
-				});
-			return true;
-			});
-		return true;
-		}
+	return true;
+	}
 );
