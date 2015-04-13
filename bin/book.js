@@ -16,7 +16,7 @@ exports.book = function(concertId, seatArr, callback) {
 	}
 
 	if(dbReady) {
-		seatsDB.find({concertId: concertId}, )
+		seatsDB.find({concertId: concertId},  )
 	} else
 		callback('database not ready!','');
 }

@@ -86,16 +86,16 @@ addConcertsIfMissing = function(concertsData, callback)
 					var price = Math.floor(Math.random()*20+1)*1000
 					// Verð á bilinu 1000 til 20000
 					concertsDB.create([{
-						eventDateName: concerts[i].eventDateName,
+						eventdatename: concerts[i].eventDateName,
 						name: concerts[i].name,
-						dateOfShow: concerts[i].dateOfShow,
-						userGroupName: concerts[i].userGroupName,
-						eventHallName: concerts[i].eventHallName,
-						imageSource: concerts[i].imageSource,
+						dateofshow: concerts[i].dateOfShow,
+						usergroupname: concerts[i].userGroupName,
+						eventhallname: concerts[i].eventHallName,
+						imagesource: concerts[i].imageSource,
 						price: price
 					}], function(err, items) {
 						if(err) return printError(err);
-						console.log('wrote to db: ' + items[0].eventDateName+' price: '+items[0].price);
+						console.log('wrote to db: ' + items[0].eventdatename+' price: '+items[0].price);
 
 
 						var noRows = 10;
@@ -105,9 +105,9 @@ addConcertsIfMissing = function(concertsData, callback)
 							for(var k = 0; k < noSeats; k++) {
 								//console.log('j:'+j+' k:'+k);
 								var seat = {
-									concertId: items[0].id,
-									seatNo: k,
-									rowNo: j,
+									concertid: items[0].id,
+									seatno: k,
+									rowno: j,
 									available: 1
 								};
 								seatArr.push(seat);
@@ -124,7 +124,7 @@ addConcertsIfMissing = function(concertsData, callback)
 				//return true;
 			}
 		};
-		concertsDB.exists({eventDateName : concerts[i].eventDateName, dateOfShow: concerts[i].dateOfShow}, createIt(i));
+		concertsDB.exists({eventdatename : concerts[i].eventDateName, dateofshow: concerts[i].dateOfShow}, createIt(i));
 		callback(true);
 	}
 	// Hér vantar callback();
@@ -147,7 +147,7 @@ addConcertsIfMissing = function(concertsData, callback)
 db.onReady(function() {
 		console.log('calling back');
 		dbReady = true;
-
+		exports.update(function() { return true; });
 		concertsDB = db.Concerts;
 		seatsDB = db.Seats;
 	return true;

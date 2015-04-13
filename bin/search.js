@@ -7,9 +7,22 @@ var dbReady = false;
 
 exports.search = function(query, callback) {
 	var re = new RegExp("tónleikar","i");
+	var searchTerm = 'SELECT * FROM concerts WHERE';
 	if(dbReady)
-		concertsDB.find({name: re},callback);
-		//concertsDB.find().where("eventDateName LIKE ?", ['Samsöngur á föstudegi']).run(callback);
+	{
+		if (query.date)
+		{
+			searchDate = query.date;
+		}
+		if (query.term)
+		{
+			searchTerm = query.
+		}
+	}
+		db.db.driver.execQuery("SELECT * FROM concerts WHERE  eventhallname LIKE '%Björtuloft%'",
+			['eventDateName'], callback);
+		//concertsDB.find().where("id LIKE ??", [1]).run(callback);
+	//concertsDB.find({name: re},callback);
 
 };
 

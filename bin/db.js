@@ -45,18 +45,18 @@ function setUp(err, db, callback) {
 	 *****************/
 	var Concerts = db.define('concerts', {
 		id: {type: 'number'},
-		eventDateName: {type: 'text'},
+		eventdatename: {type: 'text'},
 		name: {type: 'text'},
-		dateOfShow: {type: 'text'},
-		userGroupName: {type: 'text'},
-		eventHallName: {type: 'text'},
-		imageSource: {type: 'text'},
+		dateofshow: {type: 'text'},
+		usergroupname: {type: 'text'},
+		eventhallname: {type: 'text'},
+		imagesource: {type: 'text'},
 		price: {type: 'number'}
 	});
 	var Seats = db.define('seats', {
-		concertId:	 {type: 'text'},
-		seatNo:		 {type: 'number'},
-		rowNo:		 {type: 'number'},
+		concertid:	 {type: 'text'},
+		seatno:		 {type: 'number'},
+		rowno:		 {type: 'number'},
 		available: {type: 'text'}
 	});
 	/*****************
