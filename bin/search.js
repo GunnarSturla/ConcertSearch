@@ -10,25 +10,25 @@ exports.search = function(query, callback) {
 	var searchTerm = "SELECT * FROM concerts WHERE";
 	if(dbReady)
 	{
-		query.term = "Björtuloft";
-		console.log(query.term);
-		if (query.term)
-		{
-			searchTerm += " eventhallname LIKE %"+query.term+"% OR name LIKE %"+query.term+"% OR dateshow LIKE %";
-			searchTerm += ""+query.term+"% OR usergroupname LIKE %"+query.term+"% OR eventhallname LIKE %"+query.term;
-			searchTerm += "% OR price LIKE %"+query.term+"%";
-		}
+		query.term = "Harpa";
+		query.date = "2015-04-15T21:00:00";
 		if (query.date)
 		{
-			searchTerm += " AND dateshow LIKE %"+query.date+"%";
+			searchTerm += " dateofshow LIKE '%"+query.date+"%'";
+			if (query.term) searchTerm += " AND (";
 		}
-	}
+		if (query.term)
+		{
+			searchTerm += " eventhallname LIKE '%"+query.term+"%'";
+			searchTerm += " OR name LIKE '%"+query.term+"%'";
+			searchTerm += " OR usergroupname LIKE '%"+query.term+"%'";
+			searchTerm += " OR eventhallname LIKE '%"+query.term+"%'";
+			//if (query.date) searchTerm += " AND"
+			if(query.date) searchTerm += ")";
+		}
+		//console.log(searchTerm);
 		db.db.driver.execQuery(searchTerm, callback);
-		/*db.db.driver.execQuery("SELECT * FROM concerts WHERE  eventhallname LIKE '%Björtuloft%'",
-			['eventDateName'], callback);*/
-		//concertsDB.find().where("id LIKE ??", [1]).run(callback);
-	//concertsDB.find({name: re},callback);
-
+	}
 };
 
 
