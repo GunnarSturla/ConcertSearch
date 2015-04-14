@@ -98,8 +98,8 @@ addConcertsIfMissing = function(concertsData, callback)
 						console.log('wrote to db: ' + items[0].eventdatename+' price: '+items[0].price);
 
 
-						var noRows = 10;
-						var noSeats = 10;
+						var noRows = 5;
+						var noSeats = 5;
 						var seatArr = [];
 						for(var j = 0; j < noRows; j++) {
 							for(var k = 0; k < noSeats; k++) {
@@ -113,7 +113,7 @@ addConcertsIfMissing = function(concertsData, callback)
 								seatArr.push(seat);
 							}
 						}
-						//console.log(seatArr);
+						console.log(seatArr);
 						seatsDB.create(seatArr, function(err, items) {
 							if(err) return printError(err);
 							console.log('Setti '+items.length+' seats í db tengt');

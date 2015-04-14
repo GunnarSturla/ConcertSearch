@@ -14,7 +14,7 @@ exports.getAvailableSeats = function(concertId, callback)
 		//db.db.driver.execQuery(searchTerm, callback);
 		//seatsDB.find({concertid: concertId}, callback);
 
-		var hallSize = 10;
+		var hallSize = 5;
 		var returnArray = [];
 		for (var i = 0; i < hallSize; i++)
 		{
@@ -26,31 +26,43 @@ exports.getAvailableSeats = function(concertId, callback)
 		}
 		var seatCount = 0;
 
-		function returnBuilder(i, j, callback)
+		function returnBuilder(callback)
 		{
+			console.log('returnBuilder: '+ hallSize);
 
 			return function(err, result) {
 				if(err) callback(err, '');
+				console.log('return function: '+result.length+ hallSize);
+				console.log(result);
 
 				if(result) {
-					if(result.available) {
-						returnArray[i][j] = true;
+					for (var i = 0; i < result.length; i++)
+					{
+						console.log("result[i]"+result[i].available);
+						//console.log('result.seat: '+result[i].seatno + ' row: '+result[i].rowno);
+						console.log("seatno "+ result[i].seatno + " rowno "+ result[i].rowno);
+
+						if(result[i].available) {
+							console.log("i " + i);
+							returnArray[i%10][Math.floor(i/10)] = true;
+						}
+						console.log(returnArray);
+						seatCount++;
+						if(seatCount === hallSize*hallSize) {
+							callback(returnArray);
+						}
+
 					}
-					seatCount++;
-					if(seatCount === hallSize*hallSize) {
-						callback(returnArray);
-					}
+
 				} else {
 					callback('No concert found by that id', '');
 				}
 			}
 		};
-		for(var i = 0; i < hallSize; i++) {
-			for(var i = 0; i < hallSize; i++) {
-				seatsDB.find({concertid: concertId}, returnBuilder(i, j, callback));
 
-			}
-		}
+
+		seatsDB.find({concertid: concertId}, returnBuilder(callback));
+
 	}
 }
 
@@ -81,7 +93,7 @@ db.onReady(function() {
 
 		exports.getAvailableSeats(2, function(err, results) {
 			if(err) console.log(err);
-			console.log(results);
+			console.log(results[0].available);
 		});
 
 	}
