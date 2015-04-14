@@ -101,3 +101,7 @@ function setUp(err, db, callback) {
 	callback();
 
 }
+
+function printError(err){
+	console.log(err);
+}
