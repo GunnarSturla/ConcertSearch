@@ -54,7 +54,7 @@ function setUp(err, db, callback) {
 		price: {type: 'number'}
 	});
 	var Seats = db.define('seats', {
-		concertid:	 {type: 'text'},
+		concertid:	 {type: 'number'},
 		seatno:		 {type: 'number'},
 		rowno:		 {type: 'number'},
 		available: {type: 'text'}

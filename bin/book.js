@@ -5,10 +5,15 @@ var concertsDB = null;
 var seatsDB = null;
 var dbReady = false;
 
-exports.getAvailableSeats(concertId, callback)
+exports.getAvailableSeats = function(concertId, callback)
 {
 	if (dbReady)
 	{
+		//var searchTerm = "SELECT * FROM seats";// WHERE concertid = 2";//+concertId.id;
+		//console.log(searchTerm);
+		//db.db.driver.execQuery(searchTerm, callback);
+		//seatsDB.find({concertid: concertId}, callback);
+
 		var hallSize = 10;
 		var returnArray = [];
 		for (var i = 0; i < hallSize; i++)
@@ -21,22 +26,28 @@ exports.getAvailableSeats(concertId, callback)
 		}
 		var seatCount = 0;
 
-		var returnBuilder = function (i, j, callback)
+		function returnBuilder(i, j, callback)
 		{
 
 			return function(err, result) {
-				if(result.available) {
-					returnArray[i][j] = true;
-				}
-				seatCount++;
-				if(seatCount === hallSize*hallSize) {
-					callback(returnArray);
+				if(err) callback(err, '');
+
+				if(result) {
+					if(result.available) {
+						returnArray[i][j] = true;
+					}
+					seatCount++;
+					if(seatCount === hallSize*hallSize) {
+						callback(returnArray);
+					}
+				} else {
+					callback('No concert found by that id', '');
 				}
 			}
 		};
 		for(var i = 0; i < hallSize; i++) {
 			for(var i = 0; i < hallSize; i++) {
-				seatsDB.find({concertid: concertId}, returnBuilder(i, j, ));
+				seatsDB.find({concertid: concertId}, returnBuilder(i, j, callback));
 
 			}
 		}
@@ -47,14 +58,13 @@ exports.book = function(concertId, seatArr, callback) {
 
 	seatChecker = function(callback) {
 		console.log('oðiajsd');
-
 		return function(err, results) {
 
 		}
 	}
 
 	if(dbReady) {
-		seatsDB.find({concertid: concertId},  )
+		seatsDB.find({concertid: concertId},  seatChecker(callback))
 	} else
 		callback('database not ready!','');
 }
@@ -66,13 +76,12 @@ db.onReady(function() {
 		concertsDB = db.Concerts;
 		seatsDB = db.Seats;
 
-		exports.search({id: 2}, function(err, results) {
-			if(err)
-				console.log(err);
-			else {
-				console.log(results);
-				console.log('eventHalName:'+ results[0].eventHallName);
-			}
+		qArr = [[1, 1, 1]
+				[2, 3, 4]];
+
+		exports.getAvailableSeats(2, function(err, results) {
+			if(err) console.log(err);
+			console.log(results);
 		});
 
 	}
