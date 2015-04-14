@@ -43,14 +43,14 @@ db.onReady(function() {
 		concertsDB = db.Concerts;
 		seatsDB = db.Seats;
 
-		exports.search({id: 2}, function(err, results) {
+		/*exports.search({id: 2}, function(err, results) {
 			if(err)
 				console.log(err);
 			else {
 				console.log(results);
 				//console.log('eventHalName:'+ results[0].eventHallName);
 			}
-		});
+		});*/
 
 	}
 );

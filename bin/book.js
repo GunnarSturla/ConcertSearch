@@ -28,29 +28,29 @@ exports.getAvailableSeats = function(concertId, callback)
 
 		function returnBuilder(callback)
 		{
-			console.log('returnBuilder: '+ hallSize);
+			//console.log('returnBuilder: '+ hallSize);
 
 			return function(err, result) {
 				if(err) callback(err, '');
-				console.log('return function: '+result.length+ hallSize);
-				console.log(result);
+				//console.log('return function: '+result.length+ hallSize);
+				//console.log(result);
 
 				if(result) {
-					console.log(result.length);
+					//console.log(result.length);
 					for (var i = 0; i < result.length; i++)
 					{
-						console.log("result[i]"+result[i].available);
+						console.log("result[i] "+result[i].available);
 						//console.log('result.seat: '+result[i].seatno + ' row: '+result[i].rowno);
-						console.log("seatno "+ result[i].seatno + " rowno "+ result[i].rowno);
+						//console.log("seatno "+ result[i].seatno + " rowno "+ result[i].rowno);
 
-						if(result[i].available) {
-							console.log("i " + i);
+						if(result[i].available==='1') {
+							//console.log("i " + i);
 							returnArray[i%5][Math.floor(i/5)] = true;
 						}
-						console.log(returnArray);
+						//console.log(returnArray);
 						seatCount++;
-						if(seatCount === hallSize*hallSize) {
-							callback(returnArray);
+						if(seatCount === result.length) {
+							callback('', returnArray);
 						}
 
 					}
@@ -86,15 +86,36 @@ exports.book = function(concertId, seatArr, callback)
 
 exports.bookSeats = function(concertId, seatArr, callback) {
 
-	seatChecker = function(callback) {
-		console.log('oðiajsd');
-		return function(err, results) {
-
-		}
-	}
-
+	console.log('seatArr');
+	console.log(seatArr);
 	if(dbReady) {
-		seatsDB.find({concertid: concertId},  seatChecker(callback))
+		var bookingNumber = generateBookingNumber();
+		var count = 0;
+		var totalBookings = seatArr.length;
+		function bookInDb(callback) {
+			//console.log('bookInDb');
+
+			return function(err, result) {
+				//console.log('return function');
+				//console.log(result);
+
+				result[0].save({ available:  bookingNumber}, function (err) {
+					if(err) callback(err,'');
+
+					count++;
+					if(count==totalBookings)
+						callback('', bookingNumber);
+				});
+			}
+		}
+
+		for (var i = 0; i < seatArr.length; i++)
+		{
+			//console.log('seatArr:');
+			//console.log(seatArr[i]);
+			seatsDB.find({concertid: concertId, rowno: seatArr[i][0], seatno: seatArr[i][1]}, bookInDb(callback));
+		}
+
 	} else
 		callback('database not ready!','');
 }
@@ -106,14 +127,15 @@ db.onReady(function() {
 		concertsDB = db.Concerts;
 		seatsDB = db.Seats;
 
-		qArr = [[1, 1, 1]
-				[2, 3, 4]];
+		/*qArr = [[0,0],
+				[0,1],
+				[1,3]];*/
 
-		/*exports.getAvailableSeats(2, function(err, results) {
+		/*exports.getAvailableSeats(1, function(err, results) {
 			if(err) console.log(err);
-			console.log(results[0].available);
+			console.log(results);
 		});*/
-		exports.book('','',function(bookingNumber){console.log(bookingNumber);});
+		//exports.bookSeats(1, qArr, function(err, bookingNumber){if(!err) console.log('booking success! '+ bookingNumber);});
 
 
 	}
