@@ -5,13 +5,17 @@ var concertsDB = null;
 var seatsDB = null;
 var dbReady = false;
 
+// Notkun: search.search(query, callback)
+// Fyrir: query er hlutur sem inniheldur query.term (term er strengur) og query.date (er strengur)
+// Eftir: kallað er á callback fallið með fylki sem inniheldur þá concert hluti sem passa við leitina
+
+
 exports.search = function(query, callback) {
-	var re = new RegExp("tónleikar","i");
 	var searchTerm = "SELECT * FROM concerts WHERE";
 	if(dbReady)
 	{
-		query.term = "Harpa";
-		query.date = "2015-04-15T21:00:00";
+		//query.term = "Harpa";
+		//query.date = "2015-04-15T21:00:00";
 		if (query.date)
 		{
 			searchTerm += " dateofshow LIKE '%"+query.date+"%'";
