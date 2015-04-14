@@ -70,11 +70,11 @@ exports.getAvailableSeats = function(concertId, callback)
 function generateBookingNumber()
 {
 	var refNumLength = 6;
-	var characters = '123456789abcdefghijklmnoprstuvxyz';
+	var characters = '123456789ABCDEFGHIJKLMNOPRSTUVXYZ';
 	var refNum = '';
 	for (var i = 0; i < refNumLength; i++)
 	{
-		refNum += characters[Math.floor(Math.random*characters.length)];
+		refNum += characters.charAt(Math.floor(Math.random()*characters.length));
 	}
 	return refNum;
 }
@@ -109,10 +109,12 @@ db.onReady(function() {
 		qArr = [[1, 1, 1]
 				[2, 3, 4]];
 
-		exports.getAvailableSeats(2, function(err, results) {
+		/*exports.getAvailableSeats(2, function(err, results) {
 			if(err) console.log(err);
 			console.log(results[0].available);
-		});
+		});*/
+		exports.book('','',function(bookingNumber){console.log(bookingNumber);});
+
 
 	}
 );
