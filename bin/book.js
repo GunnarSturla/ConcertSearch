@@ -36,6 +36,7 @@ exports.getAvailableSeats = function(concertId, callback)
 				console.log(result);
 
 				if(result) {
+					console.log(result.length);
 					for (var i = 0; i < result.length; i++)
 					{
 						console.log("result[i]"+result[i].available);
@@ -44,7 +45,7 @@ exports.getAvailableSeats = function(concertId, callback)
 
 						if(result[i].available) {
 							console.log("i " + i);
-							returnArray[i%10][Math.floor(i/10)] = true;
+							returnArray[i%5][Math.floor(i/5)] = true;
 						}
 						console.log(returnArray);
 						seatCount++;
@@ -66,7 +67,24 @@ exports.getAvailableSeats = function(concertId, callback)
 	}
 }
 
-exports.book = function(concertId, seatArr, callback) {
+function generateBookingNumber()
+{
+	var refNumLength = 6;
+	var characters = '123456789abcdefghijklmnoprstuvxyz';
+	var refNum = '';
+	for (var i = 0; i < refNumLength; i++)
+	{
+		refNum += characters[Math.floor(Math.random*characters.length)];
+	}
+	return refNum;
+}
+
+exports.book = function(concertId, seatArr, callback)
+{
+	callback(generateBookingNumber());
+}
+
+exports.bookSeats = function(concertId, seatArr, callback) {
 
 	seatChecker = function(callback) {
 		console.log('oðiajsd');
